@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import skew, kurtosis
 import cv2 as cv
 
 def moments_calcul(X,color_space):
