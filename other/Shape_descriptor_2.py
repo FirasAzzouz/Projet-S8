@@ -14,6 +14,11 @@ def outerContours(img):
     img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     ret, imbw = cv.threshold(img,30,255,cv.THRESH_BINARY)
     
+    # dilation and erosion
+    kernel = np.ones((5,5),np.uint8)
+    imbw = cv.dilate(imbw,kernel,iterations = 1)
+    imbw = cv.erode(imbw,kernel,iterations = 1)
+    
     # Run findContours - Note the RETR_EXTERNAL flag
     # Also, we want to find the best contour possible with CHAIN_APPROX_NONE
     contours, hierarchy = cv.findContours(imbw.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
@@ -59,7 +64,6 @@ def shapeFeatures(img, n_fft = 64):
     
     # Changer le bords en 64 points
     cnt64 = f(np.linspace(0,len(cnt),n_fft+1)[:-1])
-    print(cnt64.shape)
     
     # centroid distance
     cenDist = ((cnt64[0,:] - cx)**2 + (cnt64[1,:] - cy)**2)**0.5
@@ -99,18 +103,23 @@ def shapeFeatures(img, n_fft = 64):
         np.abs(fft3[1:int(n_fft/2)]), \
         np.abs(fft4[1:int(n_fft/2)])
 
+
+# tester le code
 if __name__ == '__main__':
     
-    filename = 'png4/259_l.png'
+    filename = 'png4/259_c.png'
     img = cv.imread(filename)
     
     _, _, _, _, _, fft, fft2, fft3, fft4 = shapeFeatures(img)
     
+    # find contours
     contours = outerContours(img)
+    
+    # pre-treatment
+    img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     
     # Create an output of all zeroes that has the same shape as the input
     # image
-    img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     out = np.zeros_like(img)
     
     # On this output, draw all of the contours that we have detected
