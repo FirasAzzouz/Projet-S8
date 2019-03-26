@@ -40,7 +40,7 @@ def plot_collection_1(n1,n2):
     else:
         print("Incorrect choice of parameters")
 """
-Plots the image of a single object in the dataset aloi_red4_view (72 images per object)
+Plots the images of a single object in the dataset aloi_red4_view (72 images per object)
 @param i: the number of the object
 """
 def plot_object_2(i):
@@ -48,6 +48,22 @@ def plot_object_2(i):
     fig,ax=plt.subplots(72//b,b,figsize=(10,10))
     for j in range(72):
         image=read_image_2(i,j)
+        j1=j//b
+        j2=j%b
+        ax[j1,j2].imshow(image)
+        ax[j1,j2].axis('off')
+    plt.subplots_adjust(wspace=0.05)
+    plt.show()
+
+"""
+Plots the image of a single person in the dataset faces_1 (20 images per person)
+@param i: the number of the person
+"""
+def plot_face_1(i):
+    b=4
+    fig,ax=plt.subplots(20//b,b,figsize=(10,10))
+    for j in range(20):
+        image=read_image_3(i,j)
         j1=j//b
         j2=j%b
         ax[j1,j2].imshow(image)
