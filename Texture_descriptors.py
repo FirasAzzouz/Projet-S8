@@ -71,7 +71,7 @@ def match(refs, img):
     return best_name
 
 """
-Transform our image to a gray image 
+Transforms our image to a gray image 
 """
 def rgb2gray(rgb):
     
