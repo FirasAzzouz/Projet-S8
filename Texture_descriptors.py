@@ -28,9 +28,9 @@ matplotlib.rcParams['font.size'] = 9
 """
 this function takes as parameters a given 
 (@img : image ) and another value (@ hist_size)  representing 
-the size of the histogram we want and return the histogram of the Local Binary pattern .
+the size of the histogram we want and returns the histogram of the Local Binary pattern .
 Inside our function , we use a predefined function called local_binary_pattern of skimage 
-which determines which determine the local binary pattern of our image 
+which determines the local binary pattern of our image 
 
 """
 def lbp(img,hist_size):
