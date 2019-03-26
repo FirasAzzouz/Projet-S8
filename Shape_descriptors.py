@@ -95,14 +95,20 @@ def shapeFeatures(img, n_fft = 64):
     fft3 = np.fft.fft(K) # courbature
     fft4 = np.fft.fft(conArea) # contour Area
     
-    # retourner un total de 9 caractéristiques, dont coef contient 2 elements,
-    # les ffts contiennent n_fft/2 elements
+    # rendre un total de 9 caractéristiques dans un seul vector, 
+    # dont coef contient 2 elements, les ffts contiennent n_fft/2 elements
     return cirRatio, coef, ecc, rect, BE, \
         np.abs(fft[1:int(n_fft/2)]), \
         np.abs(fft2[1:int(n_fft/2)]), \
         np.abs(fft3[1:int(n_fft/2)]), \
         np.abs(fft4[1:int(n_fft/2)])
 
+# rendre les 9 caractéristiques dans un seul vector
+
+def concatShapeFeatures(img, n_fft = 64):
+    cirRatio, coef, ecc, rect, BE, fft, fft2, fft3, fft4 = shapeFeatures(img,n_fft)
+    output = np.concatenate(([cirRatio], coef, [ecc], [rect], [BE], fft, fft2, fft3, fft4))
+    return output
 
 # tester le code
 if __name__ == '__main__':
@@ -111,6 +117,7 @@ if __name__ == '__main__':
     img = cv.imread(filename)
     
     _, _, _, _, _, fft, fft2, fft3, fft4 = shapeFeatures(img)
+    output = concatShapeFeatures(img,64)
     
     # find contours
     contours = outerContours(img)
@@ -138,4 +145,4 @@ if __name__ == '__main__':
     #plt.plot(np.arange(0,31),np.abs(fft))
     #plt.plot(np.arange(0,31),np.abs(fft2))
     #plt.plot(np.arange(0,31),np.abs(fft3))
-    plt.plot(np.arange(0,31),np.abs(fft4))
+    #plt.plot(np.arange(0,31),np.abs(fft4))
