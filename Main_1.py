@@ -45,12 +45,12 @@ if __name__ == '__main__':
             # hist=histogram_normalization(hist)
             X_all[3*i+j]=X_all[3*i+j]+[hist]
             
-            """
+            
             # ********************Shape_features***********************
-            shape_fft=fft_shape(X,n_fft)
+            shape_fft=concatShapeFeatures(X,n_fft)
             X_all[3*i+j]=X_all[3*i+j]+[shape_fft]
             
-            """
+            
             # ********************Texture_features***********************
             lbp_feature=lbp(X,hist_size_lbp)
             X_all[3*i+j]=X_all[3*i+j]+[lbp_feature]
