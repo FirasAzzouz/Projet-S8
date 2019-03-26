@@ -1,10 +1,18 @@
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import scipy.ndimage as nd
 import skimage.feature as ft
 from skimage import data,io
 import cv2 as cv
+
+
+"""
+Our objectif here consists on defining functions in order 
+to find features of images by using one of the technique 
+of feature extraction call Local Binary Pattern . 
+
+"""
+
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 
@@ -14,6 +22,14 @@ P = 16
 R = 2
 matplotlib.rcParams['font.size'] = 9
 
+
+"""
+this function takes as parameters a given image and another value representing 
+the size of the histogram we want and return the histogram of the Local Binary pattern .
+Inside our function , we use a predefined function called local_binary_pattern of skimage 
+which determines which determine the local binary pattern of our image 
+
+"""
 def lbp(img,hist_size):
     img=rgb2gray(img)
     lbp=ft.local_binary_pattern(img, P, R, METHOD)
@@ -24,6 +40,11 @@ def lbp(img,hist_size):
     # return lbp
 
 
+"""
+KullBack_leibler_divergence determines the information lost of 
+a distribution p approximated to a distribution q 
+That can thus helps us determine later the score of our algorithm 
+"""
 def kullback_leibler_divergence(p, q):
     p = np.asarray(p)
     q = np.asarray(q)
@@ -31,6 +52,11 @@ def kullback_leibler_divergence(p, q):
     return np.sum(p[filt] * np.log2(p[filt] / q[filt]))
 
 
+
+"""
+returns the score of our algorithm Local Binary pattern by using the predefined functions 
+
+"""
 def match(refs, img):
     best_score = 10
     best_name = None
@@ -44,6 +70,9 @@ def match(refs, img):
         best_name = name
     return best_name
 
+"""
+Transform our image to a gray image 
+"""
 def rgb2gray(rgb):
     
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
