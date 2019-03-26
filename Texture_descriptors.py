@@ -1,3 +1,5 @@
+@author Diallo Alassane
+
 import matplotlib
 import matplotlib.pyplot as plt
 import scipy.ndimage as nd
@@ -24,7 +26,8 @@ matplotlib.rcParams['font.size'] = 9
 
 
 """
-this function takes as parameters a given image and another value representing 
+this function takes as parameters a given 
+(@img : image ) and another value (@ hist_size)  representing 
 the size of the histogram we want and return the histogram of the Local Binary pattern .
 Inside our function , we use a predefined function called local_binary_pattern of skimage 
 which determines which determine the local binary pattern of our image 
@@ -53,8 +56,15 @@ def kullback_leibler_divergence(p, q):
 
 
 
+
 """
-returns the score of our algorithm Local Binary pattern by using the predefined functions 
+Return the best image corresponding to the Local Binary pattern of an image 
+take an image and detrmines the histogram of its Local binary pattern . 
+Then compares this histogram to histogram of a list of images given by refs. 
+
+@img : the input image 
+@refs : list of images to compare our image with 
+
 
 """
 def match(refs, img):
@@ -72,6 +82,7 @@ def match(refs, img):
 
 """
 Transforms our image to a gray image 
+@rgb : input image 
 """
 def rgb2gray(rgb):
     
