@@ -60,22 +60,26 @@ def shapeFeatures(img, n_fft = 64):
     
     # fonction d'interpolation
     cntr = (cnt.reshape(cnt.shape[0],cnt.shape[2])).T
-    f = it.interp1d(np.arange(0,len(cnt)), cntr)
+    dist = cntr[:,np.mod(range(1,len(cnt)+1),len(cnt))] - cntr
+    dist = np.cumsum(np.linalg.norm(dist, axis=0))
+    dist = np.concatenate(([0],dist))
+    f = it.interp1d(dist, cntr[:,np.mod(range(0,len(cnt)+1),len(cnt))])
     
     # Changer le bords en 64 points
-    cnt64 = f(np.linspace(0,len(cnt),n_fft+1)[:-1])
+    cnt64 = f(np.linspace(0,dist[-1],n_fft+1)[:-1])
     
     # centroid distance
     cenDist = ((cnt64[0,:] - cx)**2 + (cnt64[1,:] - cy)**2)**0.5
     cenDistn = (cenDist - min(cenDist)) / (max(cenDist) - min(cenDist))
     
     # cumulative angular function
-    theta = np.arctan2((cnt64[1,:]-cy),(cnt64[0,:]-cx))
-    tanAngle = np.mod(theta - theta[0], 2*np.pi)
-    tanAngle[0] = 2*np.pi
+    w = n_fft // 16
+    if w == 0: 
+        w += 1
+    theta = np.arctan2((cnt64[1,:]-cnt64[1,range(-w,n_fft-w)]),\
+                       (cnt64[0,:]-cnt64[0,range(-w,n_fft-w)]))
     
-    K = tanAngle[:] - np.concatenate(([tanAngle[-1]],tanAngle[:-1]))
-    K[0] = K[0] - 2*np.pi
+    K = np.mod(theta[:] - theta[range(-1,n_fft - 1)] + np.pi,2*np.pi) - np.pi
     
     # contour area
     conArea = []
@@ -91,33 +95,30 @@ def shapeFeatures(img, n_fft = 64):
     
     # transformation discrete de Fourier
     fft = np.fft.fft(cenDistn) # centroid distance
-    fft2 = np.fft.fft(tanAngle) # tangent angle
-    fft3 = np.fft.fft(K) # courbature
-    fft4 = np.fft.fft(conArea) # contour Area
+    fft2 = np.fft.fft(K) # courbature
+    fft3 = np.fft.fft(conArea) # contour Area
     
-    # rendre un total de 9 caractéristiques dans un seul vector, 
+    # rendre un total de 8 caractéristiques dans un seul vector, 
     # dont coef contient 2 elements, les ffts contiennent n_fft/2 elements
     return cirRatio, coef, ecc, rect, BE, \
-        np.abs(fft[1:int(n_fft/2)]), \
-        np.abs(fft2[1:int(n_fft/2)]), \
-        np.abs(fft3[1:int(n_fft/2)]), \
-        np.abs(fft4[1:int(n_fft/2)])
+        np.abs(fft[0:int(n_fft/2)]), \
+        np.abs(fft2[0:int(n_fft/2)]), \
+        np.abs(fft3[0:int(n_fft/2)])
 
-# rendre les 9 caractéristiques dans un seul vector
+# rendre les 8 caractéristiques dans un seul vector
 
 def concatShapeFeatures(img, n_fft = 64):
-    cirRatio, coef, ecc, rect, BE, fft, fft2, fft3, fft4 = shapeFeatures(img,n_fft)
-    output = np.concatenate(([cirRatio], coef, [ecc], [rect], [BE], fft, fft2, fft3, fft4))
+    cirRatio, coef, ecc, rect, BE, fft, fft2, fft3= shapeFeatures(img,n_fft)
+    output = np.concatenate(([cirRatio], coef, [ecc], [rect], [BE], fft, fft2, fft3))
     return output
 
 # tester le code
 if __name__ == '__main__':
     
-    filename = 'png4/259_c.png'
+    filename = 'datasets/aloi_red4_stereo/534/534_c.png'
     img = cv.imread(filename)
     
-    _, _, _, _, _, fft, fft2, fft3, fft4 = shapeFeatures(img)
-    output = concatShapeFeatures(img,64)
+    _, _, _, _, _, fft, fft2, fft3 = shapeFeatures(img)
     
     # find contours
     contours = outerContours(img)
@@ -135,14 +136,9 @@ if __name__ == '__main__':
     
     # Spawn new windows that shows us the donut
     # (in grayscale) and the detected contour
-    cv.imshow('Donut', img) 
-    cv.imshow('Output Contour', out)
+    #cv.imshow('Donut', img) 
+    #cv.imshow('Output Contour', out)
     
-    #plt.plot(np.arange(0,64),cenDistn)
-    #plt.plot(np.arange(0,64),tanAngle)
-    #plt.plot(np.arange(0,64),K)
-    #plt.plot(np.arange(0,64),conArea)
-    #plt.plot(np.arange(0,31),np.abs(fft))
-    #plt.plot(np.arange(0,31),np.abs(fft2))
-    #plt.plot(np.arange(0,31),np.abs(fft3))
-    #plt.plot(np.arange(0,31),np.abs(fft4))
+    #plt.plot(np.arange(0,32),np.abs(fft))
+    plt.bar(np.arange(0,32),np.abs(fft2))
+    #plt.plot(np.arange(0,32),np.abs(fft3))
