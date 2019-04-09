@@ -1,6 +1,9 @@
+# author: Azzouz
+# -*- coding: utf-8 -*-
 import random
 import math
 import numpy as np
+from Distance_computation import distance
 
 # ******************************************KMeans Clustering with sklearn***************************************
 from sklearn.cluster import KMeans
@@ -13,19 +16,6 @@ def kmeans_clustering_sklearn(X,n_clusters_):
 # *********************************************************************************************************************
 # ******************************Implementation of KMeans with several distance definitions*****************************
 # *********************************************************************************************************************
-
-
-# ************************************************Distances definition*************************************************
-#Euclidean Distance between two d-dimensional points
-def eucl_dist(a, b, axis):
-    return np.linalg.norm(a - b, axis=axis)
-                          
-def distance(a,b,dist_type,axis=1):
-    if dist_type=="euclidean":
-        return eucl_dist(a,b,axis)
-    else:
-        print("Distance defintion not found")
-
 
 # ***************************************************KMeans algorithm**************************************************    
 #K-Means Algorithm
@@ -109,7 +99,7 @@ def get_center(X,k,dist_type):
     temp = []
     temp.append(X[np.random.randint(0, len(X))])
     while len(temp)<k:
-        d2= np.array([min([np.square(distance(i,c,dist_type,None)) for c in temp]) for i in X])
+        d2= np.array([min([np.square(distance(i,c,dist_type)) for c in temp]) for i in X])
         prob = d2/d2.sum()
         cum_prob = prob.cumsum()
         r = np.random.random()
@@ -129,13 +119,17 @@ def kmeans_pp(x,k,dist_type):
     center_old = np.zeros(center.shape)
 
     # initial error
-    err = distance(center, center_old, dist_type, None)
+    err = distance(center, center_old, dist_type)
 
     while err != 0:
 
         # calculatin distance of data points from centroids and assiging min distance cluster centroid as data point cluster
+        
         for i in range(len(x)):
-            distances = distance(x[i], center,dist_type)
+            distances=[]
+            for j in range(len(center)):
+                distances.append(distance(x[i], center[j],dist_type))
+            distances=np.array(distances).astype(float)
             clust = np.argmin(distances)
             cluster[i] = clust
 
@@ -149,12 +143,12 @@ def kmeans_pp(x,k,dist_type):
                 center[i] = np.mean(points, axis=0)
 
         # calculation difference between new centroid and old centroid values
-        err = distance(center, center_old, dist_type, None)
+        err = distance(center, center_old, dist_type)
 
     # calculation total difference between cluster centroids and cluster data points
     error = 0
     for i in range(k):
-        d = [distance(x[j], center[i], dist_type, None) for j in range(len(x)) if cluster[j] == i]
+        d = [distance(x[j], center[i], dist_type) for j in range(len(x)) if cluster[j] == i]
         error += np.sum(d)
 
     # counting data points in all clusters
