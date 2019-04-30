@@ -1,30 +1,29 @@
 # author: Azzouz
 # -*- coding: utf-8 -*-
 import numpy as np
-from scipy.spatial.distance import minkowski,chebyshev, cosine, correlation, braycurtis, cityblock, canberra
+import scipy.spatial.distance as dist 
 
 # ************************************************Distances definition*************************************************
  
 def chord(a,b):
-    return np.linalgnorm(a*(1*np.linalg.norm(a))-b*(1*np.linalg.norm(b)))
-    
+    return np.linalg.norm(a*(1*np.linalg.norm(a))-b*(1*np.linalg.norm(b)))
     
 def distance(a,b,dist_type):
     if dist_type=="euclidean":
-        return np.linalg.norm(a - b)
+        return dist.euclidean(a,b)
     elif dist_type=="manhattan":
-        return cityblock(a,b)
+        return dist.cityblock(a,b)
     elif dist_type=="chebyshev":
-        return chebyshev(a,b)
+        return dist.chebyshev(a,b)
     elif dist_type=="cosine":
-        return cosine(a,b)
+        return dist.cosine(a,b)
     elif dist_type=="correlation":
-        return correlation(a,b)
+        return dist.correlation(a,b)
     elif dist_type=="braycurtis":
-        return braycurtis(a,b)
+        return dist.braycurtis(a,b)
     elif dist_type=="canberra":
-        return canberra(a,b)
+        return dist.canberra(a,b)
     elif dist_type=="chord":
-        return chord(a,b)
+        return dist.chord(a,b)
     else:
         print("Distance defintion not found")

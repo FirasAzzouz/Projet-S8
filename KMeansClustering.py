@@ -9,7 +9,7 @@ from Distance_computation import distance
 from sklearn.cluster import KMeans
 def kmeans_clustering_sklearn(X,n_clusters_):
     k_means = KMeans(init='k-means++', n_clusters=n_clusters_)
-    k_means.fit(X_norm)
+    k_means.fit(X)
     classes=k_means.labels_
     return classes
 
@@ -119,7 +119,9 @@ def kmeans_pp(x,k,dist_type):
     center_old = np.zeros(center.shape)
 
     # initial error
-    err = distance(center, center_old, dist_type)
+    err = 0
+    for i in range(k):
+        err += distance(center[i], center_old[i], dist_type)
 
     while err != 0:
 
@@ -143,7 +145,9 @@ def kmeans_pp(x,k,dist_type):
                 center[i] = np.mean(points, axis=0)
 
         # calculation difference between new centroid and old centroid values
-        err = distance(center, center_old, dist_type)
+        err = 0
+        for i in range(k):
+            err += distance(center[i], center_old[i], dist_type)
 
     # calculation total difference between cluster centroids and cluster data points
     error = 0
