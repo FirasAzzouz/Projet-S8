@@ -24,6 +24,6 @@ def distance(a,b,dist_type):
     elif dist_type=="canberra":
         return dist.canberra(a,b)
     elif dist_type=="chord":
-        return dist.chord(a,b)
+        return chord(a,b)
     else:
         print("Distance defintion not found")
