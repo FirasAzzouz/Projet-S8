@@ -18,7 +18,7 @@ Reads an image from the dataset aloi_red4_stereo
 def read_image_1(i,j):
     dataset_path_1=os.path.join(os.path.abspath("datasets"),"aloi_red4_stereo")
     Image_name=[str(i)+'_c.png',str(i)+'_l.png',str(i)+'_r.png']
-    Image_path=os.path.join(dataset_path_1,str(i)+'\\',Image_name[j])
+    Image_path=os.path.join(dataset_path_1,str(i),Image_name[j])
 #     print (Image_path)
     image = cv.imread(Image_path)
     if image is None:
@@ -37,7 +37,7 @@ Reads an image from the dataset aloi_red4_view
 def read_image_2(i,j):
     dataset_path_2=os.path.join(os.path.abspath("datasets"),"aloi_red4_view")
     Image_name=str(i)+'_r'+str(j*5)+'.png'
-    Image_path=os.path.join(dataset_path_2,str(i)+'\\',Image_name)
+    Image_path=os.path.join(dataset_path_2,str(i),Image_name)
 #     print (Image_path)
     image = cv.imread(Image_path)
     if image is None:
