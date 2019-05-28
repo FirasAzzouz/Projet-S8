@@ -1,5 +1,6 @@
-@author Diallo Alassane
+#author Diallo Alassane
 
+import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import scipy.ndimage as nd
