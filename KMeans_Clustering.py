@@ -107,53 +107,61 @@ def get_center(X,k,dist_type):
         temp.append(X[ind])
     return np.array(temp)
 
-def kmeans_pp(x,k,dist_type):
+def kmeans_pp(x,k,n_init,dist_type):
     
-    # initializing cluster variable
-    cluster = np.zeros(x.shape[0])
     
-    # initializing clusters centers
-    center = get_center(x,k,dist_type)
+    error_list = []
+    cluster_list= []
+    for i in range(n_init):
+        # initializing cluster variable
+        cluster = np.zeros(x.shape[0])
 
-    # assigining zeros to old centroids value
-    center_old = np.zeros(center.shape)
+        # initializing clusters centers
+        center = get_center(x,k,dist_type)
 
-    # initial error
-    err = 0
-    for i in range(k):
-        err += distance(center[i], center_old[i], dist_type)
+        # assigining zeros to old centroids value
+        center_old = np.zeros(center.shape)
 
-    while err != 0:
-
-        # calculatin distance of data points from centroids and assiging min distance cluster centroid as data point cluster
-        
-        for i in range(len(x)):
-            distances=[]
-            for j in range(len(center)):
-                distances.append(distance(x[i], center[j],dist_type))
-            distances=np.array(distances).astype(float)
-            clust = np.argmin(distances)
-            cluster[i] = clust
-
-        # changing old centroids value
-        center_old = np.copy(center)
-
-        # Finding the new centroids by taking the average value
-        for i in range(k):
-            points = [x[j] for j in range(len(x)) if cluster[j] == i]
-            if points:
-                center[i] = np.mean(points, axis=0)
-
-        # calculation difference between new centroid and old centroid values
+        # initial error
         err = 0
         for i in range(k):
             err += distance(center[i], center_old[i], dist_type)
 
-    # calculation total difference between cluster centroids and cluster data points
-    error = 0
-    for i in range(k):
-        d = [distance(x[j], center[i], dist_type) for j in range(len(x)) if cluster[j] == i]
-        error += np.sum(d)
+        while err != 0:
+
+            # calculatin distance of data points from centroids and assiging min distance cluster centroid as data point cluster
+
+            for i in range(len(x)):
+                distances=[]
+                for j in range(len(center)):
+                    distances.append(distance(x[i], center[j],dist_type))
+                distances=np.array(distances).astype(float)
+                clust = np.argmin(distances)
+                cluster[i] = clust
+
+            # changing old centroids value
+            center_old = np.copy(center)
+
+            # Finding the new centroids by taking the average value
+            for i in range(k):
+                points = [x[j] for j in range(len(x)) if cluster[j] == i]
+                if points:
+                    center[i] = np.mean(points, axis=0)
+
+            # calculation difference between new centroid and old centroid values
+            err = 0
+            for i in range(k):
+                err += distance(center[i], center_old[i], dist_type)
+
+        # calculation total difference between cluster centroids and cluster data points
+        error = 0
+        for i in range(k):
+            d = [distance(x[j], center[i], dist_type) for j in range(len(x)) if cluster[j] == i]
+            error += np.sum(d)
+        cluster_list.append(cluster)
+        error_list.append(error)
+    
+    cluster = cluster_list[np.argmin(np.array(error_list))]
 
     # counting data points in all clusters
     count = {key: 0.0 for key in range(k)}
