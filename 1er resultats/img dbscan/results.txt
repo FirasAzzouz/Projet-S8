@@ -1,0 +1,3 @@
+Number of clusters= 4
+Silhouette score = 0.42249458024634184
+Calinski-Harabaz score = 231.8201288267026
